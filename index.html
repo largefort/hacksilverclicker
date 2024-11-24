@@ -162,6 +162,18 @@ div {
 .store-item .owned {
     color: #AAA;
 }
+    /* Disable text selection */
+* {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Edge */
+    user-select: none; /* Standard */
+}
+
+/* Disable scrolling on the entire page */
+html, body {
+    overflow: hidden; /* Disable scrolling globally */
+}
 </style>
 </head>
 <body>
