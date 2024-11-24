@@ -123,17 +123,6 @@ body {
     text-align: center;
 }
 
-@keyframes float-up {
-    0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-50px) scale(1.2);
-        opacity: 0;
-    }
-}
-
 @keyframes falling {
     0% {
         transform: translateY(-100vh) rotate(0deg);
@@ -152,15 +141,9 @@ body {
     opacity: 0.5;
 }
 
-.click-text {
-    position: absolute;
-    color: #FFD700;
-    font-weight: bold;
-    font-size: 20px;
-    pointer-events: none;
-    text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
-    z-index: 1000;
-    animation: float-up 1s ease-out forwards;
+@keyframes float-up {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
 }
 
 div {
@@ -355,11 +338,30 @@ function calculateHacksilverPerSecond() {
     }, 0) * game.multiplier;
 }
 
-document.getElementById('shield').onclick = function(event) {
+document.getElementById('shield').onclick = function() {
     game.hacksilver += 1 * game.multiplier;
-    createFloatingText(event.pageX, event.pageY, formatNumber(1 * game.multiplier));
     updateDisplay();
+    
+    // Create floating number animation
+    const floater = document.createElement('div');
+    floater.style.position = 'absolute';
+    floater.style.left = (event.pageX - 10) + 'px';
+    floater.style.top = (event.pageY - 10) + 'px';
+    floater.style.animation = 'float-up 1s ease-out';
+    floater.style.pointerEvents = 'none';
+    floater.textContent = '+' + (1 * game.multiplier);
+    document.body.appendChild(floater);
+    
+    setTimeout(() => floater.remove(), 1000);
 };
+
+setInterval(() => {
+    game.hacksilver += game.hacksilverPerSecond / 10;
+    updateDisplay();
+}, 100);
+
+// Initial setup
+updateDisplay();
 
 setInterval(() => {
     game.hacksilver += game.hacksilverPerSecond / 10;
