@@ -123,6 +123,17 @@ body {
     text-align: center;
 }
 
+@keyframes float-up {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px) scale(1.2);
+        opacity: 0;
+    }
+}
+
 @keyframes falling {
     0% {
         transform: translateY(-100vh) rotate(0deg);
@@ -141,9 +152,24 @@ body {
     opacity: 0.5;
 }
 
-@keyframes float-up {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-50px); opacity: 0; }
+.click-text {
+    position: fixed; 
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 20px;
+    pointer-events: none;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+    z-index: 1000;
+    animation: float-up 1s ease-out forwards;
+}
+
+.click-text img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
 }
 
 div {
@@ -161,18 +187,6 @@ div {
 
 .store-item .owned {
     color: #AAA;
-}
-    /* Disable text selection */
-* {
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Edge */
-    user-select: none; /* Standard */
-}
-
-/* Disable scrolling on the entire page */
-html, body {
-    overflow: hidden; /* Disable scrolling globally */
 }
 </style>
 </head>
@@ -193,193 +207,160 @@ html, body {
     </div>
 </div>
 
-<script>
-let game = {
-    hacksilver: 0,
-    hacksilverPerSecond: 0,
-    multiplier: 1,
-    buildings: [
-        {
-            name: "Viking Hand",
-            cost: 15,
-            baseHPS: 0.1,
-            owned: 0,
-            image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_15.56.55_-_A_detailed_2D_illustration_of_a_Viking-themed_hand_cursor_for_a_game__fitting_the_Norse_aesthetic._The_hand_is_rugged_and_muscular__with_visible_callu-removebg-preview.png"
-        },
-        {
-            name: "Viking Axe",
-            cost: 100,
-            baseHPS: 1,
-            owned: 0,
-            image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_15.55.34_-_A_detailed_2D_illustration_of_a_traditional_Norse_Viking_axe__designed_as_a_game_asset_for_a_Viking-themed_Cookie_Clicker_game._The_axe_features_an_in-removebg-preview.png"
-        },
-        {
-            name: "Viking House",
-            cost: 1100,
-            baseHPS: 8,
-            owned: 0,
-            image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_16.02.43_-_A_detailed_2D_illustration_of_a_Viking_building_icon_designed_as_a_game_asset_for_a_Viking-themed_clicker_game._The_building_features_a_small_wooden_s-removebg-preview.png"
-        },
-        {
-            name: "Blacksmith",
-            cost: 12000,
-            baseHPS: 47,
-            owned: 0,
-            image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.39.21_-_A_detailed_2D_illustration_of_a_Viking_blacksmith_building_designed_as_a_game_asset_for_a_Viking-themed_clicker_game._The_building_features_a_sturdy_w-removebg-preview.png"
-        },
-        {
-            name: "Mead Hall",
-            cost: 130000,
-            baseHPS: 260,
-            owned: 0,
-            image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.39.58_-_A_detailed_2D_illustration_of_a_Viking_mead_hall_designed_as_a_game_asset_for_a_Viking-themed_clicker_game._The_building_features_a_large_wooden_struc-removebg-preview.png"
-        }
-    ]
+<script>let game = {
+  hacksilver: 0,
+  hacksilverPerSecond: 0,
+  multiplier: 1,
+  clickPower: 1,
+  buildings: [{
+    name: "Viking Hand",
+    cost: 15,
+    baseHPS: 0.1,
+    owned: 0,
+    image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_15.56.55_-_A_detailed_2D_illustration_of_a_Viking-themed_hand_cursor_for_a_game__fitting_the_Norse_aesthetic._The_hand_is_rugged_and_muscular__with_visible_callu-removebg-preview.png"
+  }, {
+    name: "Viking Axe",
+    cost: 100,
+    baseHPS: 1,
+    owned: 0,
+    image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_15.55.34_-_A_detailed_2D_illustration_of_a_traditional_Norse_Viking_axe__designed_as_a_game_asset_for_a_Viking-themed_Cookie_Clicker_game._The_axe_features_an_in-removebg-preview.png"
+  }, {
+    name: "Viking House",
+    cost: 1100,
+    baseHPS: 8,
+    owned: 0,
+    image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_16.02.43_-_A_detailed_2D_illustration_of_a_Viking_building_icon_designed_as_a_game_asset_for_a_Viking-themed_clicker_game._The_building_features_a_small_wooden_s-removebg-preview.png"
+  }, {
+    name: "Blacksmith",
+    cost: 12000,
+    baseHPS: 47,
+    owned: 0,
+    image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.39.21_-_A_detailed_2D_illustration_of_a_Viking_blacksmith_building_designed_as_a_game_asset_for_a_Viking-themed_clicker_game._The_building_features_a_sturdy_w-removebg-preview.pngg"
+  }, {
+    name: "Mead Hall",
+    cost: 130000,
+    baseHPS: 260,
+    owned: 0,
+    image: "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.39.58_-_A_detailed_2D_illustration_of_a_Viking_mead_hall_designed_as_a_game_asset_for_a_Viking-themed_clicker_game._The_building_features_a_large_wooden_struc-removebg-preview.png"
+  }]
 };
-
-// Load game from localStorage
 function loadGame() {
-    const savedGame = localStorage.getItem('vikingClickerSave');
-    if (savedGame) {
-        const loadedGame = JSON.parse(savedGame);
-        game.hacksilver = loadedGame.hacksilver;
-        game.hacksilverPerSecond = loadedGame.hacksilverPerSecond;
-        game.multiplier = loadedGame.multiplier;
-        game.buildings = loadedGame.buildings;
-        calculateHacksilverPerSecond();
-        updateDisplay();
-    }
+  const savedGame = localStorage.getItem('vikingClickerSave');
+  if (savedGame) {
+    const loadedGame = JSON.parse(savedGame);
+    game.hacksilver = loadedGame.hacksilver;
+    game.hacksilverPerSecond = loadedGame.hacksilverPerSecond;
+    game.multiplier = loadedGame.multiplier;
+    game.buildings = loadedGame.buildings;
+    game.clickPower = loadedGame.clickPower || 1;
+    calculateHacksilverPerSecond();
+    updateDisplay();
+  }
 }
-
-// Save game to localStorage
 function saveGame() {
-    localStorage.setItem('vikingClickerSave', JSON.stringify(game));
+  localStorage.setItem('vikingClickerSave', JSON.stringify({
+    ...game,
+    clickPower: game.clickPower
+  }));
 }
-
-// Auto-save every 30 seconds
 setInterval(saveGame, 30000);
-
-// Load game on start
 loadGame();
-
-function createFallingHacksilver() {
-    const hacksilver = document.createElement('img');
-    hacksilver.src = "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.37.18_-_A_detailed_2D_illustration_of_a_hacksilver_currency_icon_designed_for_a_Viking-themed_clicker_game._The_icon_features_a_small_pile_of_silver_fragments-removebg-preview.png";
-    hacksilver.className = 'falling-hacksilver';
-    hacksilver.style.left = Math.random() * 100 + 'vw';
-    hacksilver.style.animation = `falling ${3 + Math.random() * 4}s linear`;
-    document.body.appendChild(hacksilver);
-    hacksilver.onanimationend = () => hacksilver.remove();
+function createFallingHacksilver(x = null) {
+  const hacksilver = document.createElement('img');
+  hacksilver.src = "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.37.18_-_A_detailed_2D_illustration_of_a_hacksilver_currency_icon_designed_for_a_Viking-themed_clicker_game._The_icon_features_a_small_pile_of_silver_fragments-removebg-preview.png";
+  hacksilver.className = 'falling-hacksilver';
+  hacksilver.style.left = x ? `${x}px` : Math.random() * 100 + 'vw';
+  hacksilver.style.animation = `falling ${3 + Math.random() * 4}s linear`;
+  document.body.appendChild(hacksilver);
+  hacksilver.onanimationend = () => hacksilver.remove();
 }
-
-// Spawn falling hacksilver based on production rate
 setInterval(() => {
-    if (game.hacksilverPerSecond > 0) {
-        createFallingHacksilver();
-    }
+  if (game.hacksilverPerSecond > 0) {
+    createFallingHacksilver();
+  }
 }, 2000);
-
 function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num/1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-        return (num/1000).toFixed(1) + 'K';
-    }
-    return Math.floor(num);
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return Math.floor(num);
 }
-
 function createFloatingText(x, y, amount) {
-    const text = document.createElement('div');
-    text.className = 'click-text';
-    text.style.left = x + 'px';
-    text.style.top = y + 'px';
-    text.textContent = '+' + amount;
-    document.body.appendChild(text);
-    setTimeout(() => text.remove(), 1000);
+  const text = document.createElement('div');
+  text.className = 'click-text';
+  text.style.left = x - 30 + 'px';
+  text.style.top = y - 20 + 'px';
+  const icon = document.createElement('img');
+  icon.src = "https://raw.githubusercontent.com/largefort/hacksilverclicker/refs/heads/main/DALL_E_2024-11-24_19.37.18_-_A_detailed_2D_illustration_of_a_hacksilver_currency_icon_designed_for_a_Viking-themed_clicker_game._The_icon_features_a_small_pile_of_silver_fragments-removebg-preview.png";
+  const amountSpan = document.createElement('span');
+  amountSpan.textContent = '+' + amount;
+  text.appendChild(icon);
+  text.appendChild(amountSpan);
+  document.body.appendChild(text);
+  setTimeout(() => text.remove(), 1000);
 }
-
 function updateDisplay() {
-    document.getElementById('hacksilver-count').textContent = `${formatNumber(game.hacksilver)} HackSilver`;
-    document.getElementById('hacksilver-per-second').textContent = `${formatNumber(game.hacksilverPerSecond)} per second`;
-    updateStore();
+  document.getElementById('hacksilver-count').textContent = `${formatNumber(game.hacksilver)} HackSilver`;
+  document.getElementById('hacksilver-per-second').textContent = `${formatNumber(game.hacksilverPerSecond)} per second`;
+  updateStore();
 }
-
 function updateStore() {
-    const storeDiv = document.getElementById('store-items');
-    game.buildings.forEach((building, index) => {
-        const existingItem = storeDiv.children[index];
-        const canBuy = game.hacksilver >= building.cost;
-        
-        if (!existingItem) {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = `store-item${canBuy ? ' can-buy' : ''}`;
-            itemDiv.innerHTML = `
+  const storeDiv = document.getElementById('store-items');
+  game.buildings.forEach((building, index) => {
+    const existingItem = storeDiv.children[index];
+    const canBuy = game.hacksilver >= building.cost;
+    if (!existingItem) {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = `store-item${canBuy ? ' can-buy' : ''}`;
+      itemDiv.innerHTML = `
                 <img src="${building.image}" alt="${building.name}">
                 <div>
                     <div class="name">${building.name}</div>
                     <div class="cost">Cost: ${formatNumber(building.cost)} HackSilver</div>
                     <div class="owned">Owned: ${building.owned}</div>
                     <div>Produces: ${building.baseHPS} HPS</div>
+                    <div>+1 HackSilver per click</div>
                 </div>
             `;
-            itemDiv.onclick = () => buyBuilding(index);
-            storeDiv.appendChild(itemDiv);
-        } else {
-            existingItem.className = `store-item${canBuy ? ' can-buy' : ''}`;
-            existingItem.querySelector('.cost').textContent = `Cost: ${formatNumber(building.cost)} HackSilver`;
-            existingItem.querySelector('.owned').textContent = `Owned: ${building.owned}`;
-        }
-    });
-}
-
-function buyBuilding(index) {
-    const building = game.buildings[index];
-    if (game.hacksilver >= building.cost) {
-        game.hacksilver -= building.cost;
-        building.owned++;
-        building.cost = Math.ceil(building.cost * 1.15);
-        calculateHacksilverPerSecond();
-        updateDisplay();
-        saveGame();
+      itemDiv.onclick = () => buyBuilding(index);
+      storeDiv.appendChild(itemDiv);
+    } else {
+      existingItem.className = `store-item${canBuy ? ' can-buy' : ''}`;
+      existingItem.querySelector('.cost').textContent = `Cost: ${formatNumber(building.cost)} HackSilver`;
+      existingItem.querySelector('.owned').textContent = `Owned: ${building.owned}`;
     }
+  });
 }
-
+function buyBuilding(index) {
+  const building = game.buildings[index];
+  if (game.hacksilver >= building.cost) {
+    game.hacksilver -= building.cost;
+    building.owned++;
+    building.cost = Math.ceil(building.cost * 1.15);
+    calculateHacksilverPerSecond();
+    updateDisplay();
+    saveGame();
+  }
+}
 function calculateHacksilverPerSecond() {
-    game.hacksilverPerSecond = game.buildings.reduce((total, building) => {
-        return total + (building.baseHPS * building.owned);
-    }, 0) * game.multiplier;
+  game.hacksilverPerSecond = game.buildings.reduce((total, building) => {
+    return total + building.baseHPS * building.owned;
+  }, 0) * game.multiplier;
+  game.clickPower = 1 + game.buildings.reduce((total, building) => {
+    return total + building.owned;
+  }, 0);
 }
-
-document.getElementById('shield').onclick = function() {
-    game.hacksilver += 1 * game.multiplier;
-    updateDisplay();
-    
-    // Create floating number animation
-    const floater = document.createElement('div');
-    floater.style.position = 'absolute';
-    floater.style.left = (event.pageX - 10) + 'px';
-    floater.style.top = (event.pageY - 10) + 'px';
-    floater.style.animation = 'float-up 1s ease-out';
-    floater.style.pointerEvents = 'none';
-    floater.textContent = '+' + (1 * game.multiplier);
-    document.body.appendChild(floater);
-    
-    setTimeout(() => floater.remove(), 1000);
+document.getElementById('shield').onclick = function (event) {
+  game.hacksilver += game.clickPower * game.multiplier;
+  createFloatingText(event.clientX, event.clientY, formatNumber(game.clickPower * game.multiplier));
+  createFallingHacksilver(event.clientX);
+  updateDisplay();
 };
-
 setInterval(() => {
-    game.hacksilver += game.hacksilverPerSecond / 10;
-    updateDisplay();
+  game.hacksilver += game.hacksilverPerSecond / 10;
+  updateDisplay();
 }, 100);
-
-// Initial setup
-updateDisplay();
-
-setInterval(() => {
-    game.hacksilver += game.hacksilverPerSecond / 10;
-    updateDisplay();
-}, 100);
-
-updateDisplay();
-</script>
+updateDisplay();</script>
 </body></html>
