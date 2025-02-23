@@ -2,111 +2,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Viking HackSilver Clicker</title>
+    <title>Silfrhakkari</title>
     <link href="https://fonts.cdnfonts.com/css/norse" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="vignette"></div>
-<div id="game-container">
-    <div id="hacksilver-display">
-        <img id="hacksilver-icon" src="hacksilver.png" alt="HackSilver Icon">
-        <div>
-            <div id="hacksilver-count">0 HackSilver</div>
-            <div id="hacksilver-per-second">0 per second</div>
+    <audio id="purchase-sound" preload="auto">
+        <source src="click.wav" type="audio/mpeg">
+    </audio>
+    <div id="splash-screen">
+        <div class="splash-content">
+            <h1 class="game-title">Silfrhakkari</h1>
+            <p class="creator-credit">Leikr Skapaðr Af Jafet Egill Jafetsson</p>
         </div>
     </div>
-
-    <div id="shield-tab" class="tab-content active">
-        <img id="shield" src="sheild.png" alt="Clickable Viking Shield">
-    </div>
-
-    <div id="market-tab" class="tab-content">
-        <div id="store-container">
-            <h2>Viking Market</h2>
-            <div id="store-items"></div>
+    <div class="vignette"></div>
+    <div id="game-container">
+        <div id="hacksilver-display">
+            <img id="hacksilver-icon" src="hacksilver.png" alt="Silfrhakk Tákn">
+            <div>
+                <div id="hacksilver-count">0 Silfrhakk</div>
+                <div id="hacksilver-per-second">0 á sekúndu</div>
+            </div>
         </div>
-    </div>
 
-    <div id="stats-tab" class="tab-content">
-        <div class="stats-container">
-            <h2>Statistics</h2>
-            <div class="stat-item">
-                <img src="hacksilver.png" alt="HackSilver">
-                <div>
-                    <div class="stat-label">Total HackSilver</div>
-                    <div id="total-hacksilver">0</div>
+        <div id="shield-tab" class="tab-content active">
+            <img id="shield" src="sheild.png" alt="Clickable Viking Shield">
+        </div>
+
+        <div id="market-tab" class="tab-content">
+            <div id="store-container">
+                <h2>Víkinga Markaðr</h2>
+                <div id="store-items"></div>
+            </div>
+        </div>
+
+        <div id="stats-tab" class="tab-content">
+            <div class="stats-container">
+                <h2>Tölfræði</h2>
+                <div class="stat-item">
+                    <img src="hacksilver.png" alt="Silfrhakk">
+                    <div>
+                        <div class="stat-label">Heildartala Silfrhakk</div>
+                        <div id="total-hacksilver">0</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <img src="hacksilver.png" alt="SPS">
+                    <div>
+                        <div class="stat-label">Silfrhakk Á Sekúndu</div>
+                        <div id="total-hps">0</div>
+                    </div>
+                </div>
+                <div class="stat-row">Tími Leikinn: <span id="time-played">0 mínútur</span></div>
+                <div class="stat-row">Heildarsmellir: <span id="total-clicks">0</span></div>
+                <div class="stat-row">Silfrhakk frá Smellum: <span id="click-hacksilver">0</span></div>
+                <h3>Byggingar í Eigu</h3>
+                <div id="building-stats"></div>
+            </div>
+        </div>
+
+        <div id="misc-tab" class="tab-content">
+            <div class="misc-container">
+                <h2>Ýmislegt</h2>
+                <button id="reset-game" class="danger-button">
+                    Eyða Framförum
+                </button>
+                <div class="warning-text">
+                    Þessa aðgerð er ekki hægt að afturkalla!
                 </div>
             </div>
-            <div class="stat-item">
-                <img src="hacksilver.png" alt="HPS">
-                <div>
-                    <div class="stat-label">HackSilver Per Second</div>
-                    <div id="total-hps">0</div>
+        </div>
+
+        <div id="valhalla-tab" class="tab-content">
+            <div class="valhalla-container">
+                <h2 class="valhalla-header">Valhöll</h2>
+                <div class="val-essence-display">
+                    Val Kraftur: <span id="current-val-essence">0</span>
+                </div>
+                <div class="valhalla-info" id="val-level">Val Stig: 0</div>
+                <div class="valhalla-info" id="prestige-multiplier">
+                    Núverandi Bónus: 0%
+                </div>
+                <div class="valhalla-info" id="next-valhalla-info">
+                    Þarf meira Silfrhakk fyrir Val Kraft
+                </div>
+                <button id="valhalla-button" class="valhalla-button" onclick="enterValhalla()" disabled>
+                    Ganga Inn í Valhöll
+                </button>
+                <div class="val-upgrades" id="val-upgrades">
+                    <!-- Val upgrades will be dynamically inserted -->
                 </div>
             </div>
-            <div class="stat-row">Time Played: <span id="time-played">0 minutes</span></div>
-            <div class="stat-row">Total Clicks: <span id="total-clicks">0</span></div>
-            <div class="stat-row">HackSilver from Clicks: <span id="click-hacksilver">0</span></div>
-            <h3>Buildings Owned</h3>
-            <div id="building-stats"></div>
         </div>
     </div>
 
-    <div id="misc-tab" class="tab-content">
-        <div class="misc-container">
-            <h2>Miscellaneous</h2>
-            <button id="reset-game" class="danger-button">
-                Erase Progress
-            </button>
-            <div class="warning-text">
-                This action cannot be undone!
-            </div>
-        </div>
+    <audio id="background-music" preload="auto" loop autoplay>
+        <source src="1.wav" type="audio/mpeg">
+    </audio>
+
+    <div id="building-modal" class="modal-overlay">
+      <div class="modal-content">
+        <!-- Content will be dynamically inserted -->
+      </div>
     </div>
 
-    <div id="valhalla-tab" class="tab-content">
-        <div class="valhalla-container">
-            <h2 class="valhalla-header">Valhalla</h2>
-            <div class="val-essence-display">
-                Val Essence: <span id="current-val-essence">0</span>
-            </div>
-            <div class="valhalla-info" id="prestige-multiplier">
-                Current Bonus: 0%
-            </div>
-            <div class="valhalla-info" id="next-valhalla-info">
-                Need more HackSilver for Val Essence
-            </div>
-            <button id="valhalla-button" class="valhalla-button" onclick="enterValhalla()" disabled>
-                Enter Valhalla
-            </button>
-        </div>
+    <div id="tab-bar">
+        <button class="tab-button active" data-tab="shield-tab">
+            <img class="tab-icon" src="sheild.png" alt="Skjöldr">
+            Skjöldr
+        </button>
+        <button class="tab-button" data-tab="market-tab">
+            <img class="tab-icon" src="hacksilver.png" alt="Markaðr">
+            Markaðr
+        </button>
+        <button class="tab-button" data-tab="stats-tab">
+            <img class="tab-icon" src="stats-icon.png" alt="Tölfræði">
+            Tölfræði
+        </button>
+        <button class="tab-button" data-tab="misc-tab">
+            <img class="tab-icon" src="misc-icon.png" alt="Ýmislegt">
+            Ýmislegt
+        </button>
+        <button class="tab-button" data-tab="valhalla-tab">
+            <img class="tab-icon" src="knarr.png" alt="Valhöll">
+            Valhöll
+        </button>
     </div>
-</div>
 
-<div id="tab-bar">
-    <button class="tab-button active" data-tab="shield-tab">
-        <img class="tab-icon" src="sheild.png" alt="Shield">
-        Shield
-    </button>
-    <button class="tab-button" data-tab="market-tab">
-        <img class="tab-icon" src="hacksilver.png" alt="Market">
-        Market
-    </button>
-    <button class="tab-button" data-tab="stats-tab">
-        <img class="tab-icon" src="stats-icon.png" alt="Stats">
-        Stats
-    </button>
-    <button class="tab-button" data-tab="misc-tab">
-        <img class="tab-icon" src="misc-icon.png" alt="Misc">
-        Misc
-    </button>
-    <button class="tab-button" data-tab="valhalla-tab">
-        <img class="tab-icon" src="knarr.png" alt="Valhalla">
-        Valhalla
-    </button>
-</div>
-
-<script src="game.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
